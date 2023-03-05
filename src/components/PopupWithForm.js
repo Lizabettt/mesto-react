@@ -1,38 +1,41 @@
-import Popup from "./Popup.js";
+import closeIcon from "../images/Close_Icon.png";
 
-export default class PopupWithForm extends Popup {
-  constructor(selectorPopup, { submitForm }) {
-    super(selectorPopup);
-
-    this._submitForm = submitForm;
-
-    this._formPopup = this._basicPopup.querySelector(".popup__form");
-    this._inputs = this._formPopup.querySelectorAll(".popup__input");
-    this._buttom = this._formPopup.querySelector(".popup__btn");
-  }
-  _getInputValues() {
-    //собирает данные всех импутов
-    this._objInput = {};
-    this._inputs.forEach((input) => {
-      this._objInput[input.name] = input.value;
-    });
-    return this._objInput;
-  }
-
-  setConservationText(text) {
-    this._buttom.textContent = text;
-  }
-  setEventListeners() {
-    super.setEventListeners();
-    this._formPopup.addEventListener("submit", (evt) => {
-      evt.preventDefault();
-      this._buttom.textContent = "Сохранение...";
-      this._submitForm(this._getInputValues());
-    });
-  }
-
-  close() {
-    super.close();
-    this._formPopup.reset();
-  }
+export default function PopupWithForm({
+  name,
+  title,
+  isOpen,
+  onClose,
+  children,
+  btnText,
+}) {
+  return (
+    <div
+      className={`popup popup_type-${name} 
+    ${isOpen ? "popup_opened" : ""}`}
+    >
+      <div className="popup__container">
+        <button className="popup__btn-close" type="button">
+          <img
+            className="popup__btn-close-pic"
+            src={closeIcon}
+            alt="Закрыть"
+            onClick={onClose}
+          />
+        </button>
+        <h2 className="popup__title">{title}</h2>
+        <form
+          className={`popup__form popup__form_type-${name}`}
+          action="popup__form"
+          name="popup__name"
+          method="post"
+          noValidate
+        >
+          {children}
+          <button className="popup__btn popup__btn-create" type="submit">
+            {btnText}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
