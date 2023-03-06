@@ -1,4 +1,4 @@
-import React from "react";
+import {useState} from 'react';
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -6,11 +6,11 @@ import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 
 export default function App() {
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
-  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
-  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-  const [isDataCards, setDataCards] = React.useState({});
-  const [chooseCard, setChooseCard] = React.useState();
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [isDataCards, setDataCards] = useState({});
+  const [chooseCard, setChooseCard] = useState(null);
 
   //смена аватара
   const handleEditAvatarClick = () => {
@@ -34,7 +34,7 @@ export default function App() {
     setIsAddPlacePopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
-    setChooseCard(false);
+    setChooseCard(null);
   }
   //разметка
   return (
