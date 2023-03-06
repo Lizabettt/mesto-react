@@ -53,7 +53,6 @@ export default function App() {
       <PopupWithForm
         name="profile"
         title="Редактировать профиль"
-        btnText="Сохранить"
         isOpen={isEditProfilePopupOpen}
         onClose={closeAllPopups}
       >
@@ -121,7 +120,6 @@ export default function App() {
       <PopupWithForm
         name="user-foto"
         title="Обновить аватар"
-        btnText="Сохранить"
         isOpen={isEditAvatarPopupOpen}
         onClose={closeAllPopups}
       >

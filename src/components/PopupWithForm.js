@@ -32,7 +32,7 @@ export default function PopupWithForm({
         >
           {children}
           <button className="popup__btn popup__btn-create" type="submit">
-            {btnText}
+            {btnText || 'Сохранить'}
           </button>
         </form>
       </div>
