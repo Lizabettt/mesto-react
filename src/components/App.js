@@ -1,9 +1,11 @@
-import {useState} from 'react';
+import { useState, useEffect } from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
 import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
+import CurrentUserContext from "../contexts/CurrentUserContext";
+import api from "../utils/Api";
 
 export default function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -11,6 +13,8 @@ export default function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isDataCards, setDataCards] = useState({});
   const [chooseCard, setChooseCard] = useState(null);
+  const [currentUser, setCurrentUser] = useState("");
+  const [cards, setCards] = useState([]); //перенесли из мейн
 
   //смена аватара
   const handleEditAvatarClick = () => {
@@ -36,121 +40,134 @@ export default function App() {
     setIsEditAvatarPopupOpen(false);
     setChooseCard(null);
   }
+  //перенесли из мейн
+  useEffect(() => {
+    Promise.all([api.getUserData(), api.getAllCards()]).then(
+      ([userData, cardData]) => {
+        setCurrentUser(userData);
+
+        setCards(cardData);
+      }
+    );
+  }, []);
   //разметка
   return (
     <div>
-      <div className="page">
-        <Header />
-        <Main
-          changeAvatar={handleEditAvatarClick}
-          changeProfile={handleEditProfileClick}
-          addPlace={handleAddPlaceClick}
-          showСard={handleShowСardClick}
+      <CurrentUserContext.Provider value={currentUser}>
+        <div className="page">
+          <Header />
+          <Main
+            changeAvatar={handleEditAvatarClick}
+            changeProfile={handleEditProfileClick}
+            addPlace={handleAddPlaceClick}
+            showСard={handleShowСardClick}
+            cards={cards}
+          />
+          <Footer />
+        </div>
+
+        <PopupWithForm
+          name="profile"
+          title="Редактировать профиль"
+          isOpen={isEditProfilePopupOpen}
+          onClose={closeAllPopups}
+        >
+          <fieldset className="popup__form-input">
+            <input
+              className="popup__input popup__input_type_name"
+              id="popupName"
+              type="text"
+              placeholder="Имя пользователя"
+              name="name"
+              minLength="2"
+              maxLength="40"
+              required
+              autoComplete="off"
+            />
+            <span className="popup__help popupName-error"></span>
+            <input
+              className="popup__input popup__input_type_job"
+              id="popupJob"
+              type="text"
+              placeholder="Вид деятельности"
+              name="about"
+              minLength="2"
+              maxLength="200"
+              required
+              autoComplete="off"
+            />
+            <span className="popup__help popupJob-error"></span>
+          </fieldset>
+        </PopupWithForm>
+
+        <PopupWithForm
+          name="add-new-card"
+          title="Новое место"
+          btnText="Создать"
+          isOpen={isAddPlacePopupOpen}
+          onClose={closeAllPopups}
+        >
+          <fieldset className="popup__form-input">
+            <input
+              className="popup__input popup__input_type_name-place"
+              id="popupNamePlace"
+              type="text"
+              placeholder="Название"
+              name="namePlace"
+              minLength="2"
+              maxLength="30"
+              required
+              autoComplete="off"
+            />
+            <span className="popup__help popupNamePlace-error"></span>
+            <input
+              className="popup__input popup__input_type_link-place"
+              id="popupLinkPlace"
+              type="url"
+              placeholder="Ссылка на картинку"
+              name="linkPlace"
+              required
+              autoComplete="off"
+            />
+            <span className="popup__help popupLinkPlace-error"></span>
+          </fieldset>
+        </PopupWithForm>
+
+        <PopupWithForm
+          name="user-foto"
+          title="Обновить аватар"
+          isOpen={isEditAvatarPopupOpen}
+          onClose={closeAllPopups}
+        >
+          <fieldset className="popup__form-input">
+            <input
+              className="popup__input popup__input_type_avatar"
+              id="popupAvatar"
+              type="text"
+              placeholder="Введите адрес"
+              name="avatar"
+              minLength="2"
+              maxLength="200"
+              required
+              autoComplete="off"
+            />
+            <span className="popup__help popupAvatar-error"></span>
+          </fieldset>
+        </PopupWithForm>
+
+        <PopupWithForm
+          name="delete"
+          title="Вы уверены?"
+          btnText="Да"
+        ></PopupWithForm>
+
+        <ImagePopup
+          name="img"
+          card={isDataCards}
+          isOpen={chooseCard}
+          onClose={closeAllPopups}
         />
-        <Footer />
-      </div>
-
-      <PopupWithForm
-        name="profile"
-        title="Редактировать профиль"
-        isOpen={isEditProfilePopupOpen}
-        onClose={closeAllPopups}
-      >
-        <fieldset className="popup__form-input">
-          <input
-            className="popup__input popup__input_type_name"
-            id="popupName"
-            type="text"
-            placeholder="Имя пользователя"
-            name="name"
-            minLength="2"
-            maxLength="40"
-            required
-            autoComplete="off"
-          />
-          <span className="popup__help popupName-error"></span>
-          <input
-            className="popup__input popup__input_type_job"
-            id="popupJob"
-            type="text"
-            placeholder="Вид деятельности"
-            name="about"
-            minLength="2"
-            maxLength="200"
-            required
-            autoComplete="off"
-          />
-          <span className="popup__help popupJob-error"></span>
-        </fieldset>
-      </PopupWithForm>
-
-      <PopupWithForm
-        name="add-new-card"
-        title="Новое место"
-        btnText="Создать"
-        isOpen={isAddPlacePopupOpen}
-        onClose={closeAllPopups}
-      >
-        <fieldset className="popup__form-input">
-          <input
-            className="popup__input popup__input_type_name-place"
-            id="popupNamePlace"
-            type="text"
-            placeholder="Название"
-            name="namePlace"
-            minLength="2"
-            maxLength="30"
-            required
-            autoComplete="off"
-          />
-          <span className="popup__help popupNamePlace-error"></span>
-          <input
-            className="popup__input popup__input_type_link-place"
-            id="popupLinkPlace"
-            type="url"
-            placeholder="Ссылка на картинку"
-            name="linkPlace"
-            required
-            autoComplete="off"
-          />
-          <span className="popup__help popupLinkPlace-error"></span>
-        </fieldset>
-      </PopupWithForm>
-
-      <PopupWithForm
-        name="user-foto"
-        title="Обновить аватар"
-        isOpen={isEditAvatarPopupOpen}
-        onClose={closeAllPopups}
-      >
-        <fieldset className="popup__form-input">
-          <input
-            className="popup__input popup__input_type_avatar"
-            id="popupAvatar"
-            type="text"
-            placeholder="Введите адрес"
-            name="avatar"
-            minLength="2"
-            maxLength="200"
-            required
-            autoComplete="off"
-          />
-          <span className="popup__help popupAvatar-error"></span>
-        </fieldset>
-      </PopupWithForm>
-
-      <PopupWithForm
-        name="delete"
-        title="Вы уверены?"
-        btnText="Да"
-      ></PopupWithForm>
-
-      <ImagePopup
-        name="img"
-        card={isDataCards}
-        isOpen={chooseCard}
-        onClose={closeAllPopups}
-      />
+      </CurrentUserContext.Provider>
     </div>
   );
 }
