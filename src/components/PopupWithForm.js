@@ -1,5 +1,5 @@
 import closeIcon from "../images/Close_Icon.png";
-
+import { useEffect } from "react";
 export default function PopupWithForm({
   name,
   title,
@@ -8,12 +8,29 @@ export default function PopupWithForm({
   children,
   btnText,
 }) {
+  
+  //закрытие по esc
+  function handleEscClose(evt) {
+    evt.key === "Escape" && onClose();
+  }
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleEscClose);
+    return () => 
+    document.removeEventListener("keydown", handleEscClose);
+  });
+
+  //разметка
   return (
     <div
       className={`popup popup_type-${name} 
     ${isOpen ? "popup_opened" : ""}`}
+      onClick={onClose}
     >
-      <div className="popup__container">
+      <div
+        className="popup__container"
+        onClick={(event) => event.stopPropagation()}
+      >
         <button className="popup__btn-close" type="button">
           <img
             className="popup__btn-close-pic"
@@ -32,7 +49,7 @@ export default function PopupWithForm({
         >
           {children}
           <button className="popup__btn popup__btn-create" type="submit">
-            {btnText || 'Сохранить'}
+            {btnText || "Сохранить"}
           </button>
         </form>
       </div>

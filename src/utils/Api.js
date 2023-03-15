@@ -73,21 +73,29 @@ class Api {
     }).then((res) => this._result(res));
   }
 
-  //добавление лайка карточке
-  addLike(idCard) {
+  //лайк?
+  changeLikeCardStatus(idCard, isLiked) {
     return fetch(`${this._url}/cards/likes/${idCard}`, {
-      method: "PUT",
+      method: !isLiked ? "PUT" : "DELETE",
       headers: this._headers,
     }).then((res) => this._result(res));
   }
 
-  // слимаем лайк карточке
-  removeLike(idCard) {
-    return fetch(`${this._url}/cards/likes/${idCard}`, {
-      method: "DELETE",
-      headers: this._headers,
-    }).then((res) => this._result(res));
-  }
+  //   //добавление лайка карточке
+  //   addLike(idCard) {
+  //     return fetch(`${this._url}/cards/likes/${idCard}`, {
+  //       method: "PUT",
+  //       headers: this._headers,
+  //     }).then((res) => this._result(res));
+  //   }
+
+  //   // слимаем лайк карточке
+  //   removeLike(idCard) {
+  //     return fetch(`${this._url}/cards/likes/${idCard}`, {
+  //       method: "DELETE",
+  //       headers: this._headers,
+  //     }).then((res) => this._result(res));
+  //   }
 }
 const api = new Api({
   url: "https://mesto.nomoreparties.co/v1/cohort-58",

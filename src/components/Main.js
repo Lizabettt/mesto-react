@@ -3,8 +3,6 @@ import addCard from "../images/add.svg";
 import Card from "./Card";
 import CurrentUserContext from "../contexts/CurrentUserContext";
 import { useContext } from "react";
-// import { useEffect, useState } from "react";
-// import api from "../utils/Api";
 
 export default function Main({
   changeAvatar,
@@ -12,24 +10,10 @@ export default function Main({
   addPlace,
   showСard,
   cards,
+  onCardLike,
+  onCardDelete
 }) {
-  // const [userInfoName, setUserInfoName] = useState("");
-  // const [userInfoJob, setUserInfoJob] = useState("");
-  // const [userAvatar, setUserAvatar] = useState("");
-  // const [cards, setCards] = useState([]);
-
-  //получаем данные с сервера
-  // useEffect(() => {
-  //   Promise.all([api.getUserData(), api.getAllCards()]).then(
-  //     ([userData, cardData]) => {
-  //       setUserInfoName(userData.name);
-  //       setUserInfoJob(userData.about);
-  //       setUserAvatar(userData.avatar);
-
-  //       setCards(cardData);
-  //     }
-  //   );
-  // }, []);
+ 
   const currentUser = useContext(CurrentUserContext);
 
   return (
@@ -70,7 +54,13 @@ export default function Main({
       <section className="elements">
         <ul className="elements__grid">
           {cards.map((card) => (
-            <Card key={card._id} card={card} showСard={showСard} />
+            <Card 
+            key={card._id} 
+            card={card} 
+            showСard={showСard}
+            onCardLike={onCardLike}
+            onCardDelete={onCardDelete}
+            />
           ))}
         </ul>
       </section>

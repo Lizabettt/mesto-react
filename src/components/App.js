@@ -24,7 +24,7 @@ export default function App() {
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
   };
-  //добавление ново карточки
+  //добавление новой карточки
   const handleAddPlaceClick = () => {
     setIsAddPlacePopupOpen(true);
   };
@@ -33,6 +33,32 @@ export default function App() {
     setChooseCard(true);
     setDataCards(card);
   };
+  // 1.Есть лайк? 2. запрос в апи на обновление
+  function handleCardLike(card) {
+    const isLiked = card.likes.some((selectedCard) => 
+    selectedCard._id === currentUser._id
+    );
+    api
+    .changeLikeCardStatus(card._id, isLiked)
+    .then((newCard) => {
+      setCards((state) =>
+        state.map((selectedCard) =>
+          selectedCard._id === card._id ? newCard : selectedCard
+        )
+      );
+    });
+  }
+  //удаляем карточку
+  const handleCardDelete = (card) => {
+    api
+    .deleteCard(card._id)
+    .then(() => {
+      setCards(() =>
+        cards.filter((selectedCard) => 
+        selectedCard._id !== card._id)
+      );
+    })
+  }
   //все закрой
   function closeAllPopups() {
     setIsAddPlacePopupOpen(false);
@@ -40,7 +66,9 @@ export default function App() {
     setIsEditAvatarPopupOpen(false);
     setChooseCard(null);
   }
-  //перенесли из мейн
+  
+ 
+  //грузим карточки и инфо пользователя с сервера
   useEffect(() => {
     Promise.all([api.getUserData(), api.getAllCards()]).then(
       ([userData, cardData]) => {
@@ -50,6 +78,7 @@ export default function App() {
       }
     );
   }, []);
+  
   //разметка
   return (
     <div>
@@ -60,8 +89,10 @@ export default function App() {
             changeAvatar={handleEditAvatarClick}
             changeProfile={handleEditProfileClick}
             addPlace={handleAddPlaceClick}
-            showСard={handleShowСardClick}
             cards={cards}
+            showСard={handleShowСardClick}
+            onCardDelete={handleCardDelete}
+            onCardLike={handleCardLike}
           />
           <Footer />
         </div>
@@ -71,7 +102,7 @@ export default function App() {
           title="Редактировать профиль"
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
-        >
+         >
           <fieldset className="popup__form-input">
             <input
               className="popup__input popup__input_type_name"
