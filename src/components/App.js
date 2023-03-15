@@ -6,6 +6,8 @@ import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 import CurrentUserContext from "../contexts/CurrentUserContext";
 import api from "../utils/Api";
+import EditProfilePopup from "./EditProfilePopup";
+import EditAvatarPopup from "./EditAvatarPopup";
 
 export default function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -35,12 +37,10 @@ export default function App() {
   };
   // 1.Есть лайк? 2. запрос в апи на обновление
   function handleCardLike(card) {
-    const isLiked = card.likes.some((selectedCard) => 
-    selectedCard._id === currentUser._id
+    const isLiked = card.likes.some(
+      (selectedCard) => selectedCard._id === currentUser._id
     );
-    api
-    .changeLikeCardStatus(card._id, isLiked)
-    .then((newCard) => {
+    api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
       setCards((state) =>
         state.map((selectedCard) =>
           selectedCard._id === card._id ? newCard : selectedCard
@@ -50,15 +50,12 @@ export default function App() {
   }
   //удаляем карточку
   const handleCardDelete = (card) => {
-    api
-    .deleteCard(card._id)
-    .then(() => {
+    api.deleteCard(card._id).then(() => {
       setCards(() =>
-        cards.filter((selectedCard) => 
-        selectedCard._id !== card._id)
+        cards.filter((selectedCard) => selectedCard._id !== card._id)
       );
-    })
-  }
+    });
+  };
   //все закрой
   function closeAllPopups() {
     setIsAddPlacePopupOpen(false);
@@ -66,8 +63,7 @@ export default function App() {
     setIsEditAvatarPopupOpen(false);
     setChooseCard(null);
   }
-  
- 
+
   //грузим карточки и инфо пользователя с сервера
   useEffect(() => {
     Promise.all([api.getUserData(), api.getAllCards()]).then(
@@ -78,7 +74,18 @@ export default function App() {
       }
     );
   }, []);
-  
+
+  //меняем инфо пользователя
+  function handleUpdateUser(data) {
+    api.changeUserData(data).then(setCurrentUser);
+    closeAllPopups();
+  }
+
+  //меняем аватарку
+  function handleUpdateUserAvatar(data) {
+    api.changeAvatar(data).then(setCurrentUser);
+    closeAllPopups();
+  }
   //разметка
   return (
     <div>
@@ -96,41 +103,16 @@ export default function App() {
           />
           <Footer />
         </div>
-
-        <PopupWithForm
-          name="profile"
-          title="Редактировать профиль"
+        <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
-         >
-          <fieldset className="popup__form-input">
-            <input
-              className="popup__input popup__input_type_name"
-              id="popupName"
-              type="text"
-              placeholder="Имя пользователя"
-              name="name"
-              minLength="2"
-              maxLength="40"
-              required
-              autoComplete="off"
-            />
-            <span className="popup__help popupName-error"></span>
-            <input
-              className="popup__input popup__input_type_job"
-              id="popupJob"
-              type="text"
-              placeholder="Вид деятельности"
-              name="about"
-              minLength="2"
-              maxLength="200"
-              required
-              autoComplete="off"
-            />
-            <span className="popup__help popupJob-error"></span>
-          </fieldset>
-        </PopupWithForm>
-
+          onUpdateUser={handleUpdateUser}
+        />
+        <EditAvatarPopup
+          isOpen={isEditAvatarPopupOpen}
+          onClose={closeAllPopups}
+          onUpdateAvatarUser={handleUpdateUserAvatar}
+        />
         <PopupWithForm
           name="add-new-card"
           title="Новое место"
@@ -161,28 +143,6 @@ export default function App() {
               autoComplete="off"
             />
             <span className="popup__help popupLinkPlace-error"></span>
-          </fieldset>
-        </PopupWithForm>
-
-        <PopupWithForm
-          name="user-foto"
-          title="Обновить аватар"
-          isOpen={isEditAvatarPopupOpen}
-          onClose={closeAllPopups}
-        >
-          <fieldset className="popup__form-input">
-            <input
-              className="popup__input popup__input_type_avatar"
-              id="popupAvatar"
-              type="text"
-              placeholder="Введите адрес"
-              name="avatar"
-              minLength="2"
-              maxLength="200"
-              required
-              autoComplete="off"
-            />
-            <span className="popup__help popupAvatar-error"></span>
           </fieldset>
         </PopupWithForm>
 

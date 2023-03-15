@@ -1,5 +1,6 @@
 import closeIcon from "../images/Close_Icon.png";
 import { useEffect } from "react";
+
 export default function PopupWithForm({
   name,
   title,
@@ -7,6 +8,7 @@ export default function PopupWithForm({
   onClose,
   children,
   btnText,
+  onSubmit
 }) {
   
   //закрытие по esc
@@ -46,9 +48,12 @@ export default function PopupWithForm({
           name="popup__name"
           method="post"
           noValidate
+          onSubmit={onSubmit}
         >
           {children}
-          <button className="popup__btn popup__btn-create" type="submit">
+          <button 
+          className="popup__btn popup__btn-create" 
+          type="submit">
             {btnText || "Сохранить"}
           </button>
         </form>
