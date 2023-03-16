@@ -1,6 +1,11 @@
 import closeIcon from "../images/Close_Icon.png";
 
-export default function ImagePopup({ name, card, isOpen, onClose }) {
+export default function ImagePopup({ 
+  name, 
+  card, 
+  isOpen, 
+  onClose 
+}) {
   return (
     <div
       className={`popup popup_type-${name} 

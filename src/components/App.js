@@ -8,8 +8,10 @@ import CurrentUserContext from "../contexts/CurrentUserContext";
 import api from "../utils/Api";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
+import AddPlacePopup from "./AddPlacePopup";
 
 export default function App() {
+
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -22,25 +24,31 @@ export default function App() {
   const handleEditAvatarClick = () => {
     setIsEditAvatarPopupOpen(true);
   };
+
   //смена профиля
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
   };
+
   //добавление новой карточки
   const handleAddPlaceClick = () => {
     setIsAddPlacePopupOpen(true);
   };
+
   //посмотреть карточку поближе:)
   const handleShowСardClick = (card) => {
     setChooseCard(true);
     setDataCards(card);
   };
+
   // 1.Есть лайк? 2. запрос в апи на обновление
   function handleCardLike(card) {
     const isLiked = card.likes.some(
       (selectedCard) => selectedCard._id === currentUser._id
     );
-    api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
+    api
+    .changeLikeCardStatus(card._id, isLiked)
+    .then((newCard) => {
       setCards((state) =>
         state.map((selectedCard) =>
           selectedCard._id === card._id ? newCard : selectedCard
@@ -48,14 +56,19 @@ export default function App() {
       );
     });
   }
+
   //удаляем карточку
   const handleCardDelete = (card) => {
-    api.deleteCard(card._id).then(() => {
+    api
+    .deleteCard(card._id)
+    .then(() => {
       setCards(() =>
-        cards.filter((selectedCard) => selectedCard._id !== card._id)
+        cards.filter((selectedCard) => 
+        selectedCard._id !== card._id)
       );
     });
   };
+
   //все закрой
   function closeAllPopups() {
     setIsAddPlacePopupOpen(false);
@@ -69,7 +82,6 @@ export default function App() {
     Promise.all([api.getUserData(), api.getAllCards()]).then(
       ([userData, cardData]) => {
         setCurrentUser(userData);
-
         setCards(cardData);
       }
     );
@@ -77,15 +89,29 @@ export default function App() {
 
   //меняем инфо пользователя
   function handleUpdateUser(data) {
-    api.changeUserData(data).then(setCurrentUser);
+    api
+    .changeUserData(data)
+    .then(setCurrentUser);
     closeAllPopups();
   }
 
   //меняем аватарку
   function handleUpdateUserAvatar(data) {
-    api.changeAvatar(data).then(setCurrentUser);
+    api
+    .changeAvatar(data)
+    .then(setCurrentUser);
     closeAllPopups();
   }
+  //
+  function handleAddPlaceSubmit(data) {
+    api
+    .createNewCard(data)
+    .then((newCard) => {
+      setCards([newCard, ...cards]);
+    });
+    closeAllPopups();
+  }
+
   //разметка
   return (
     <div>
@@ -113,39 +139,11 @@ export default function App() {
           onClose={closeAllPopups}
           onUpdateAvatarUser={handleUpdateUserAvatar}
         />
-        <PopupWithForm
-          name="add-new-card"
-          title="Новое место"
-          btnText="Создать"
+        <AddPlacePopup
           isOpen={isAddPlacePopupOpen}
           onClose={closeAllPopups}
-        >
-          <fieldset className="popup__form-input">
-            <input
-              className="popup__input popup__input_type_name-place"
-              id="popupNamePlace"
-              type="text"
-              placeholder="Название"
-              name="namePlace"
-              minLength="2"
-              maxLength="30"
-              required
-              autoComplete="off"
-            />
-            <span className="popup__help popupNamePlace-error"></span>
-            <input
-              className="popup__input popup__input_type_link-place"
-              id="popupLinkPlace"
-              type="url"
-              placeholder="Ссылка на картинку"
-              name="linkPlace"
-              required
-              autoComplete="off"
-            />
-            <span className="popup__help popupLinkPlace-error"></span>
-          </fieldset>
-        </PopupWithForm>
-
+          onAddPlace={handleAddPlaceSubmit}
+        />
         <PopupWithForm
           name="delete"
           title="Вы уверены?"

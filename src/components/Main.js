@@ -11,9 +11,8 @@ export default function Main({
   showСard,
   cards,
   onCardLike,
-  onCardDelete
+  onCardDelete,
 }) {
- 
   const currentUser = useContext(CurrentUserContext);
 
   return (
@@ -54,12 +53,12 @@ export default function Main({
       <section className="elements">
         <ul className="elements__grid">
           {cards.map((card) => (
-            <Card 
-            key={card._id} 
-            card={card} 
-            showСard={showСard}
-            onCardLike={onCardLike}
-            onCardDelete={onCardDelete}
+            <Card
+              key={card._id}
+              card={card}
+              showСard={showСard}
+              onCardLike={onCardLike}
+              onCardDelete={onCardDelete}
             />
           ))}
         </ul>

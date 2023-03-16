@@ -8,9 +8,9 @@ export default function PopupWithForm({
   onClose,
   children,
   btnText,
-  onSubmit
+  onSubmit,
 }) {
-  
+
   //закрытие по esc
   function handleEscClose(evt) {
     evt.key === "Escape" && onClose();
@@ -51,9 +51,7 @@ export default function PopupWithForm({
           onSubmit={onSubmit}
         >
           {children}
-          <button 
-          className="popup__btn popup__btn-create" 
-          type="submit">
+          <button className="popup__btn popup__btn-create" type="submit">
             {btnText || "Сохранить"}
           </button>
         </form>
