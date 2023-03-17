@@ -1,4 +1,5 @@
 import closeIcon from "../images/Close_Icon.png";
+import { useEffect } from "react";
 
 export default function ImagePopup({ 
   name, 
@@ -6,12 +7,27 @@ export default function ImagePopup({
   isOpen, 
   onClose 
 }) {
+  //закрытие по esc
+  function handleEscClose(evt) {
+    evt.key === "Escape" && onClose();
+  }
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleEscClose);
+    return () => 
+    document.removeEventListener("keydown", handleEscClose);
+  });
+
   return (
     <div
       className={`popup popup_type-${name} 
     ${isOpen ? "popup_opened" : ""}`}
+    onClick={onClose}
     >
-      <figure className="popup__img-box">
+      <figure 
+      className="popup__img-box"
+      onClick={(evt) => evt.stopPropagation()}
+      >
         <img 
         className="popup__img-max" 
         src={card.link} 

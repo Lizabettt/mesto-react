@@ -31,7 +31,7 @@ export default function PopupWithForm({
     >
       <div
         className="popup__container"
-        onClick={(event) => event.stopPropagation()}
+        onClick={(evt) => evt.stopPropagation()}
       >
         <button className="popup__btn-close" type="button">
           <img
