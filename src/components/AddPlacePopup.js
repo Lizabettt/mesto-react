@@ -1,34 +1,25 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
+import useForm from "../hooks/useForm";
 
 export default function AddPlacePopup({ 
   isOpen, 
   onClose, 
-  onAddPlace 
-}) {
-
-  const [name, setName] = useState("");
-  const [link, setLink] = useState("");
+  onAddPlace }) {
+    
+  const { values, setValues, handleChange } = useForm({});
 
   useEffect(() => {
-    setName("");
-    setLink("");
-  }, [isOpen]);
-
-  //имя карточки
-  function changePlaceName(evt) {
-    setName(evt.target.value);
-  }
-
-  //ссылка
-  function changePlaceLink(evt) {
-    setLink(evt.target.value);
-  }
+    setValues({});
+  }, [setValues, isOpen]);
 
   //обработка формы
   function handleSubmit(evt) {
     evt.preventDefault();
-    onAddPlace({ name, link });
+    onAddPlace({
+      name: values.namePlace,
+      link: values.linkPlace,
+    });
   }
 
   //разметка
@@ -52,8 +43,8 @@ export default function AddPlacePopup({
           maxLength="30"
           required
           autoComplete="off"
-          value={name}
-          onChange={changePlaceName}
+          value={values.namePlace || ""}
+          onChange={handleChange}
         />
         <span className="popup__help popupNamePlace-error"></span>
         <input
@@ -64,8 +55,8 @@ export default function AddPlacePopup({
           name="linkPlace"
           required
           autoComplete="off"
-          value={link}
-          onChange={changePlaceLink}
+          value={values.linkPlace || ""}
+          onChange={handleChange}
         />
         <span className="popup__help popupLinkPlace-error"></span>
       </fieldset>

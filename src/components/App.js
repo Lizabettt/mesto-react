@@ -54,6 +54,9 @@ export default function App() {
           selectedCard._id === card._id ? newCard : selectedCard
         )
       );
+    })
+    .catch((err) => {
+      console.log(err);
     });
   }
 
@@ -66,6 +69,9 @@ export default function App() {
         cards.filter((selectedCard) => 
         selectedCard._id !== card._id)
       );
+    })
+    .catch((err) => {
+      console.log(err);
     });
   };
 
@@ -79,28 +85,35 @@ export default function App() {
 
   //грузим карточки и инфо пользователя с сервера
   useEffect(() => {
-    Promise.all([api.getUserData(), api.getAllCards()]).then(
-      ([userData, cardData]) => {
+    Promise.all([api.getUserData(), api.getAllCards()])
+    .then(([userData, cardData]) => {
         setCurrentUser(userData);
         setCards(cardData);
       }
-    );
+    )
+    .catch((err) => {
+      console.log(err);
+    });
   }, []);
 
   //меняем инфо пользователя
   function handleUpdateUser(data) {
     api
     .changeUserData(data)
-    .then(setCurrentUser);
-    closeAllPopups();
+    .then(setCurrentUser, closeAllPopups())
+    .catch((err) => {
+      console.log(err);
+    });
   }
 
   //меняем аватарку
   function handleUpdateUserAvatar(data) {
     api
     .changeAvatar(data)
-    .then(setCurrentUser);
-    closeAllPopups();
+    .then(setCurrentUser, closeAllPopups())
+    .catch((err) => {
+      console.log(err);
+    })
   }
   //
   function handleAddPlaceSubmit(data) {
@@ -108,8 +121,10 @@ export default function App() {
     .createNewCard(data)
     .then((newCard) => {
       setCards([newCard, ...cards]);
+      closeAllPopups()})    
+    .catch((err) => {
+      console.log(err);
     });
-    closeAllPopups();
   }
 
   //разметка

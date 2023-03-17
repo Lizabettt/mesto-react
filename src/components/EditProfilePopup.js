@@ -1,40 +1,26 @@
 import CurrentUserContext from "../contexts/CurrentUserContext";
-import { 
-  useState, 
-  useContext, 
-  useEffect 
-} from "react";
+import { useContext, useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
+import useForm from "../hooks/useForm";
 
-export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
-  
+export default function EditProfilePopup({ 
+  isOpen, 
+  onClose, 
+  onUpdateUser }) {
+    
   const currentUser = useContext(CurrentUserContext);
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const { values, setValues, handleChange } = useForm({});
 
   useEffect(() => {
-    setName(currentUser.name);
-    setDescription(currentUser.about);
-  }, [currentUser]);
+    if (currentUser) {
+      setValues(currentUser);
+    }
+  }, [setValues, currentUser, isOpen]);
 
-  //смена имени
-  function changeUserName(evt) {
-    setName(evt.target.value);
-  }
-
-  //смена about
-  function changeUserDescription(evt) {
-    setDescription(evt.target.value);
-  }
-
-  //обработка формы
   function handleSubmit(evt) {
     evt.preventDefault();
-    onUpdateUser({
-      name,
-      about: description,
-    });
+    onUpdateUser(values);
   }
 
   return (
@@ -56,8 +42,8 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
           maxLength="40"
           required
           autoComplete="off"
-          value={name}
-          onChange={changeUserName}
+          value={values.name || ""}
+          onChange={handleChange}
         />
         <span className="popup__help popupName-error"></span>
         <input
@@ -70,8 +56,8 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
           maxLength="200"
           required
           autoComplete="off"
-          value={description}
-          onChange={changeUserDescription}
+          value={values.about || ""}
+          onChange={handleChange}
         />
         <span className="popup__help popupJob-error"></span>
       </fieldset>

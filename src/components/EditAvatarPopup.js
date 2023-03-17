@@ -1,17 +1,28 @@
-import { useRef } from "react";
+// import { useRef } from "react";
+import { useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
+import useForm from "../hooks/useForm";
 
 export default function EditAvatarPopup({
   isOpen,
   onClose,
   onUpdateAvatarUser,
 }) {
-  const avatar = useRef();
+  // const avatar = useRef();
+
+  //По заданию надо конечно использовать useRef,
+  // но по логике надо сюда useEffect. .....
+
+  const { values, setValues, handleChange } = useForm({});
+
+  useEffect(() => {
+    setValues({});
+  }, [setValues, isOpen]);
 
   function handleSubmit(evt) {
     evt.preventDefault();
     onUpdateAvatarUser({
-      avatar: avatar.current.value,
+      avatar: values.avatar,
     });
   }
 
@@ -34,7 +45,9 @@ export default function EditAvatarPopup({
           maxLength="200"
           required
           autoComplete="off"
-          ref={avatar}
+          // ref={avatar}
+          value={values.avatar || ""}
+          onChange={handleChange}
         />
         <span className="popup__help popupAvatar-error"></span>
       </fieldset>
